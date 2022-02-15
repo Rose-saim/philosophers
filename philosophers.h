@@ -29,8 +29,6 @@ typedef struct s_lst_philo
 	int		signal;
 }t_lst_philo;
 
-int	signal = 0;
-
 int	ft_atoi(const char *str);
 int	ft_strlen(char *str);
 

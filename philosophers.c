@@ -12,6 +12,8 @@ void	take_fork(int	fork_to_take, t_philo *philo)
 	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take]);
 }
 
+int	singale = 0;
+
 void	*eat(void *p)
 {
 	t_philo*		philo;
@@ -19,15 +21,16 @@ void	*eat(void *p)
 
 	philo = (t_philo*)p;
 	number_fork = philo->id;
-	if (philo->id %2 == 0)
+	if (philo->id %2 == 1)
 		take_fork(number_fork - 1, philo);
 	else
 	{
-		while (1)
-		{
-			if (signal == 1)
-				take_fork(number_fork - 1, philo);
-		}
+		if (singale == 1)
+			puts("Arch");
+		// while (1)
+		// {
+		// 	take_fork(number_fork - 1, philo);
+		// }
 	}
 	pthread_exit (NULL);
 }
@@ -48,7 +51,6 @@ int	main(int ac, char **av)
 	//Create list philo
 	lst_philo.begin = NULL;
 	lst_philo.end = NULL;
-	lst_philo.size = nbr_philo;
 	creat_lst(&lst_philo, nbr_philo);
 	//Init stock thread
 	pthread_mutex_init(&fork.door, NULL);
