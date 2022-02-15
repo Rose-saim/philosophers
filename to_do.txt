@@ -1,0 +1,2 @@
+-Create time for every event
+-Die philo

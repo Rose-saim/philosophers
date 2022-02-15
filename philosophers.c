@@ -7,7 +7,7 @@ void	take_fork(int	fork_to_take, t_philo *philo)
 	pthread_mutex_lock(&philo->fork->door);
 	printf("philo|%zu||eat|%d|%d|\n",philo->id, fork_to_take, fork_to_take + 1);
 	pthread_mutex_unlock(&philo->fork->door);
-	sleep(1);
+	sleep(2);
 	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take + 1]);
 	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take]);
 }
@@ -21,17 +21,7 @@ void	*eat(void *p)
 
 	philo = (t_philo*)p;
 	number_fork = philo->id;
-	if (philo->id %2 == 1)
-		take_fork(number_fork - 1, philo);
-	else
-	{
-		if (singale == 1)
-			puts("Arch");
-		// while (1)
-		// {
-		// 	take_fork(number_fork - 1, philo);
-		// }
-	}
+	take_fork(number_fork - 1, philo);
 	pthread_exit (NULL);
 }
 
