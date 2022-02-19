@@ -24,8 +24,10 @@ typedef struct s_philo
 	pthread_t			thread_eat;
 	t_fork				*fork;
 	unsigned int		time_bf_eat;
-	struct s_philo		*next;
 	int					dead;
+	// t_philo	*begin;
+	// t_philo	*end;
+	struct s_philo		*next;
 }t_philo;
 
 typedef struct s_lst_philo
@@ -48,11 +50,12 @@ t_lst_philo	*creat_lst(t_lst_philo *lst_philo, int nbr_philo);
 t_lst_philo	*lst_add(t_lst_philo *lst_philo, int i);
 t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *philo, int nbr_philo);
 
-void	*eat(t_philo *philo);
+void	*eat(void *p);
 void	*ft_think(t_philo *philo);
 void	*ft_sleep(t_philo *philo);
 void	take_fork(int 	fork_to_take, t_philo *philo);
 
+void	end_pthread(t_philo * head, size_t id_end);
 void	parsing_argument(char **av);
 void	write_error(char *str);
 #endif

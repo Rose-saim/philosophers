@@ -25,3 +25,12 @@ void	parsing_argument(char **av)
 		++i;
 	}
 }
+
+void	end_pthread(t_philo * head, size_t id_end)
+{
+	while (head->id != id_end)
+	{
+		pthread_join(head->thread_eat, NULL);
+		head = head->next;
+	}
+}

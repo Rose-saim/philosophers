@@ -82,7 +82,7 @@ t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 	}
 	i = 0;
 	while (i < nbr_philo)
-	{
+	{;
 		head->dead = 0;
 		head->fork = fork;
 		head = head->next;
