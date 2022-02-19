@@ -34,7 +34,7 @@ t_lst_philo	*creat_lst(t_lst_philo *lst_philo, int nbr_philo)
 	int			i;
 
 	i = 0;
-	while (i <= nbr_philo)
+	while (i < nbr_philo)
 	{
 		lst_philo = lst_add(lst_philo, i + 1);
 		++i;
@@ -80,10 +80,13 @@ t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 		pthread_mutex_init(&fork->tab_fork[i], NULL);
 		++i;
 	}
-	while (head->id != lst_philo->end->id)
+	i = 0;
+	while (i < nbr_philo)
 	{
+		head->dead = 0;
 		head->fork = fork;
 		head = head->next;
+		++i;
 	}
 	return (lst_philo);
 }

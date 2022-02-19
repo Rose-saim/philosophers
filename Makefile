@@ -12,7 +12,7 @@ RM = rm -f
 all:		$(NAME)
 
 $(NAME):	$(MANDA_OBJS)
-				$(CC) $(CFLAGS) $(MANDA_OBJS) -pthread -o $(NAME)
+				$(CC) -pthread $(CFLAGS) $(MANDA_OBJS) -pthread -o $(NAME)
 
 clean:
 			$(RM) $(MANDA_OBJS)
