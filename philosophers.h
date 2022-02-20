@@ -8,25 +8,23 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+
 typedef struct s_fork
 {
 	void				*philo;
 	pthread_mutex_t		*tab_fork;
-	pthread_mutex_t		door;
 	unsigned int		time_for_eat;
+	pthread_mutex_t		mutex;
 }t_fork;
 
 typedef struct s_philo
 {
 	struct timeval		time_begin;
 	struct timeval		time_end;
-	size_t				id;
-	pthread_t			thread_eat;
-	t_fork				*fork;
 	unsigned int		time_bf_eat;
-	int					dead;
-	// t_philo	*begin;
-	// t_philo	*end;
+	size_t				id;
+	pthread_t			thread;
+	// t_fork				*fork;
 	struct s_philo		*next;
 }t_philo;
 
@@ -34,14 +32,11 @@ typedef struct s_lst_philo
 {
 	t_philo	*begin;
 	t_philo	*end;
-	int		signal;
+	pthread_mutex_t		door;
+	t_fork	*fork;
+	int		nbr_philo;
 }t_lst_philo;
 
-struct    s_timeval  
-{
-  time_t        tv_sec ;   //used for seconds
-  suseconds_t       tv_usec ;   //used for microseconds
-}timeval;
 
 int	ft_atoi(const char *str);
 int	ft_strlen(char *str);
@@ -55,7 +50,6 @@ void	*ft_think(t_philo *philo);
 void	*ft_sleep(t_philo *philo);
 void	take_fork(int 	fork_to_take, t_philo *philo);
 
-void	end_pthread(t_philo * head, size_t id_end);
 void	parsing_argument(char **av);
 void	write_error(char *str);
 #endif
