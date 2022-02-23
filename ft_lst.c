@@ -9,7 +9,7 @@ void	add_info_lst(t_lst_philo *lst_philo, int time_bf_eat, int time_for_eat)
 	philo = lst_philo->begin;
 	while (i < lst_philo->nbr_philo)
 	{
-		gettimeofday(philo->time_begin);
+		gettimeofday(&philo->time_begin, NULL);
 		philo->time_bf_eat = time_bf_eat;
 		philo->time_for_eat = time_for_eat;
 		philo = philo->next;

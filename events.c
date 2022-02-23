@@ -35,14 +35,42 @@ void	end_pthread(t_lst_philo *lst_philo)
 		++i;
 	}
 }
+
+unsigned int	time_diff(struct timeval *start, struct timeval *end)
+{
+    return (end->tv_usec - start->tv_usec);
+}
+
+void	time_eat(int time_for_eat)
+{
+	int	i;
+
+	i = 0;
+	printf("%d\n", time_for_eat /10);
+	while (i < time_for_eat / 10)
+	{
+		usleep(10);
+		++i;
+	}
+}
+
 void	take_fork(int	fork_to_take, t_philo *philo)
 {
-	(void)fork_to_take;
+	unsigned int	time_past;
+
 	pthread_mutex_lock(&philo->fork->tab_fork[fork_to_take]);
 	pthread_mutex_lock(&philo->fork->tab_fork[fork_to_take + 1]);
+	time_eat(philo->time_for_eat);
+	gettimeofday(&philo->time_end, NULL);
+	time_past = time_diff(&philo->time_begin, &philo->time_end);
 	pthread_mutex_lock(&philo->fork->mutex);
-	printf("\033[1;33m");
-	printf("id|%zu|time_use|%d|\n", philo->id,philo->time_bf_eat);
+	printf("id|%zu|time_use|%d|\n", philo->id, time_past);
+	if (time_past <= philo->time_bf_eat)
+	{
+		printf("\033[1;33m");
+	}
+	else
+		exit(2);
 	pthread_mutex_unlock(&philo->fork->mutex);
 	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take + 1]);
 	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take]);
