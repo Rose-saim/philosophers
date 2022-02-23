@@ -23,6 +23,16 @@ int	ft_atoi(const char *str)
 }
 
 
+int	ft_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str && str[i])
+		++i;
+	return (i);
+}
+
 t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 {
 	int	i;
@@ -49,14 +59,4 @@ t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 		++i;
 	}
 	return (lst_philo);
-}
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str && str[i])
-		++i;
-	return (i);
 }

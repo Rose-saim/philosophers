@@ -1,6 +1,6 @@
 #include "philosophers.h"
 
-void	add_info_lst(t_lst_philo *lst_philo, int time_bf_eat, int time_for_eat)
+void	add_info_lst(t_lst_philo *lst_philo, int info[])
 {
 	t_philo	*philo;
 	int		i;
@@ -10,8 +10,12 @@ void	add_info_lst(t_lst_philo *lst_philo, int time_bf_eat, int time_for_eat)
 	while (i < lst_philo->nbr_philo)
 	{
 		gettimeofday(&philo->time_begin, NULL);
-		philo->time_bf_eat = time_bf_eat;
-		philo->time_for_eat = time_for_eat;
+		philo->dead = 0;
+		philo->time_bf_eat = info[0];
+		philo->time_for_eat = info[1];
+		philo->time_to_sleep = info[2];
+		philo->nbr_time_eat = info[3];
+		philo->lst_philo = lst_philo;
 		philo = philo->next;
 		++i;
 	}

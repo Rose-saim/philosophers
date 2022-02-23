@@ -10,7 +10,7 @@ void	parsing_argument(char **av)
 	int	i;
 	int	j;
 
-	i = 0;
+	i = 1;
 	while (av[i])
 	{
 		j = 0;
@@ -18,7 +18,7 @@ void	parsing_argument(char **av)
 			write_error("Argument is empty");
 		while (av[i][j])
 		{
-			if (av[i][j] <= '0' && av[i][j] >= '9')
+			if (!(av[i][j] >= '0' && av[i][j] <= '9'))
 				write_error("Argument is wrong");
 			++j;
 		}
