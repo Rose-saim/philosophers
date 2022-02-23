@@ -1,49 +1,5 @@
 #include "philosophers.h"
 
-t_lst_philo	*lst_add(t_lst_philo *lst_philo, int i)
-{
-	t_philo	*node;
-	t_philo	*head;
-
-	if (!lst_philo->begin)
-	{
-		node = (t_philo *)malloc(sizeof(t_philo));
-		if (!node)
-			return (NULL);
-		node->id = (size_t)i;
-		node->next = node;
-		lst_philo->begin = node;
-		lst_philo->end = node;
-	}
-	else
-	{
-		head = lst_philo->begin;
-		node = malloc(sizeof(t_philo));
-		if (!node)
-			return (NULL);
-		node->id = i;
-		node->next = lst_philo->begin;
-		lst_philo->end->next = node;
-		lst_philo->end = node;
-	}
-	return (lst_philo);
-}
-
-t_lst_philo	*creat_lst(t_lst_philo *lst_philo, int nbr_philo)
-{
-	int			i;
-
-	i = 0;
-	lst_philo->begin = NULL;
-	lst_philo->end = NULL;
-	while (i < nbr_philo)
-	{
-		lst_philo = lst_add(lst_philo, i + 1);
-		++i;
-	}
-	return (lst_philo);
-}
-
 int	ft_atoi(const char *str)
 {
 	int	res;
@@ -73,24 +29,25 @@ t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 	t_philo	*head;
 
 	i = 0;
+	head = lst_philo->begin;
+	(void)lst_philo;
 	fork->tab_fork = malloc(sizeof(pthread_mutex_t) * (nbr_philo + 1));
 	if (!fork->tab_fork)
 		return (NULL);
-	pthread_mutex_init(&fork->mutex, NULL);
+	pthread_mutex_init(&(fork->mutex), NULL);
 	while (i < nbr_philo)
 	{
-		pthread_mutex_init(&fork->tab_fork[i], NULL);
+		pthread_mutex_init(&(fork->tab_fork[i]), NULL);
 		++i;
 	}
+	(lst_philo->fork) = fork;
 	i = 0;
-	head = lst_philo->begin;
-	while (i < nbr_philo)
+	while (i < lst_philo->nbr_philo)
 	{
 		head->fork = fork;
 		head = head->next;
 		++i;
 	}
-	lst_philo->fork = fork;
 	return (lst_philo);
 }
 

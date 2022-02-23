@@ -1,4 +1,5 @@
-MANDA_NAMES	= philosophers.c ft_init.c error.c
+MANDA_NAMES	= philosophers.c ft_init.c error.c events.c \
+			  ft_lst.c
 
 MANDA_OBJS	= $(MANDA_NAMES:.c=.o)
 
