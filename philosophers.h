@@ -16,10 +16,16 @@ typedef struct s_fork
 	pthread_mutex_t		mutex;
 }t_fork;
 
+typedef struct	s_sig
+{
+	int	sig_dead;
+}t_sig;
+
 typedef struct s_philo
 {
 	struct timeval		time_begin;
 	struct timeval		time_end;
+	void				*lst_philo;
 	unsigned int		time_bf_eat;
 	unsigned int		time_for_eat;
 	unsigned int		time_to_sleep;
@@ -28,7 +34,7 @@ typedef struct s_philo
 	size_t				id;
 	pthread_t			thread;
 	t_fork				*fork;
-	void			*lst_philo;
+	t_sig				*sig;
 	struct s_philo		*next;
 }t_philo;
 
@@ -53,7 +59,7 @@ void	add_info_lst(t_lst_philo *lst_philo, int info[]);
 
 void	initilisation(int ac, char **av, t_lst_philo *lst_philo);
 
-void	*eat(void *p);
+void	*eat(t_philo *philo);
 void	*ft_think(t_philo *philo);
 void	*ft_sleep(t_philo *philo);
 void	take_fork(int 	fork_to_take, t_philo *philo);

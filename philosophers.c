@@ -20,6 +20,25 @@ void	initilisation(int ac, char **av, t_lst_philo *lst_philo)
 	philo = lst_philo->begin;
 }
 
+void	init_sig(t_lst_philo *lst_philo)
+{
+	int	nbr_philo;
+	int	i;
+	t_philo	*philo;
+	t_sig	sig;
+
+	i = 0;
+	sig.sig_dead = 1;
+	philo = lst_philo->begin;
+	nbr_philo = lst_philo->nbr_philo;
+	while (i < nbr_philo)
+	{
+		philo->sig = &sig;
+		philo = philo->next;
+		++i;
+	}
+}
+
 int	main(int ac, char **av)
 {
 	t_lst_philo	lst_philo;
@@ -30,7 +49,7 @@ int	main(int ac, char **av)
 	parsing_argument(av);
 	initilisation(ac, av, &lst_philo);
 	init_mutex(&fork, &lst_philo, lst_philo.nbr_philo);
-	// exit(2);
+	init_sig(&lst_philo);
 	to_do(&lst_philo);
 	return (0);
 }
