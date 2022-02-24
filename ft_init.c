@@ -1,36 +1,43 @@
 #include "philosophers.h"
 
-int	ft_atoi(const char *str)
+void	init_info(int ac, char **av, t_lst_philo *lst_philo)
 {
-	int	res;
-	int	negative;
+	t_philo	*philo;
+	int		info[4];
 
-	negative = 1;
-	res = 0;
-	while (*str && (*str == ' ' || *str == '\n' || *str == '\t' ||
-			*str == '\v' || *str == '\f' || *str == '\r'))
-		++str;
-	if (*str == '-')
-		negative = -1;
-	if (*str == '-' || *str == '+')
-		++str;
-	while (*str && *str >= '0' && *str <= '9')
-	{
-		res = res * 10 + (*str - 48);
-		++str;
-	}
-	return (res * negative);
+	philo = NULL;
+	lst_philo->nbr_philo = ft_atoi(av[1]);
+	if (lst_philo->nbr_philo == 1)
+		write_error("Philo is dead");
+	info[0] = ft_atoi(av[2]);
+	info[1] = ft_atoi(av[3]);
+	info[2] = ft_atoi(av[4]);
+	if (ac == 6)
+		info[3] = ft_atoi(av[5]);
+	else
+		info[3] = -1;
+	creat_lst(lst_philo, lst_philo->nbr_philo);
+	add_info_lst(lst_philo, info);
+	philo = lst_philo->begin;
 }
 
-
-int	ft_strlen(char *str)
+void	init_sig(t_lst_philo *lst_philo)
 {
+	int	nbr_philo;
 	int	i;
+	t_philo	*philo;
+	t_sig	sig;
 
 	i = 0;
-	while (str && str[i])
+	sig.sig_dead = 1;
+	philo = lst_philo->begin;
+	nbr_philo = lst_philo->nbr_philo;
+	while (i < nbr_philo)
+	{
+		philo->sig = &sig;
+		philo = philo->next;
 		++i;
-	return (i);
+	}
 }
 
 t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)

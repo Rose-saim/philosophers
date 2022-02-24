@@ -64,3 +64,20 @@ t_lst_philo	*creat_lst(t_lst_philo *lst_philo, int nbr_philo)
 	}
 	return (lst_philo);
 }
+
+void	free_lst_philo(t_lst_philo *lst_philo)
+{
+    t_philo *philo;
+    t_philo *head;
+
+	head = lst_philo->begin;
+	philo = head->next;
+    free(head);
+    while (philo->id != lst_philo->end->id)
+    {
+        head = philo;
+        philo = philo->next;
+        free(head);
+    }
+    free(lst_philo->end);
+}

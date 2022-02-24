@@ -1,12 +1,12 @@
 MANDA_NAMES	= philosophers.c ft_init.c error.c events.c \
-			  ft_lst.c
+			  ft_lst.c utils.c status.c
 
 MANDA_OBJS	= $(MANDA_NAMES:.c=.o)
 
 NAME		= philosophers
 
 CC			= clang
-CFLAGS		= -Wall -Wextra -Werror -g
+CFLAGS		= -Wall -Wextra -Werror
 
 RM = rm -f
 
