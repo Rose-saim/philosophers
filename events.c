@@ -1,34 +1,16 @@
 #include "philosophers.h"
 
+void	print_thread(pthread_mutex_t *lock, char *str, t_philo *philo, float time)
+{
+	pthread_mutex_lock(lock);
+	printf("%s ", str);
+	printf("philo|%zu|%f|ms\n", philo->id, time);
+	pthread_mutex_unlock(lock);
+}
+
 float time_diff(struct timeval *start, struct timeval *end)
 {
     return (end->tv_sec - start->tv_sec) + 1e-6*(end->tv_usec - start->tv_usec);
-}
-
-void	*ft_sleep(t_philo *philo)
-{
-	float	time_past;
-
-	usleep(philo->time_to_sleep);
-	gettimeofday(&philo->time_end, NULL);
-	time_past = time_diff(&philo->time_begin, &philo->time_end);
-	pthread_mutex_lock(&philo->fork->mutex);
-	printf("\033[0;32mphilo|%zu|sleep|%f|\n", philo->id, time_past);
-	pthread_mutex_unlock(&philo->fork->mutex);
-	return (NULL);
-}
-
-void	*ft_think(t_philo *philo)
-{
-	float	time_past;
-	
-	gettimeofday(&philo->time_begin, NULL);
-	gettimeofday(&philo->time_end, NULL);
-	time_past = time_diff(&philo->time_begin, &philo->time_end);
-	pthread_mutex_lock(&philo->fork->mutex);
-	printf("\033[0;37mphilo|%zu|think|%f|\n", philo->id, time_past);
-	pthread_mutex_unlock(&philo->fork->mutex);
-	return (NULL);
 }
 
 void	end_pthread(t_lst_philo *lst_philo)
@@ -45,46 +27,72 @@ void	end_pthread(t_lst_philo *lst_philo)
 	}
 }
 
-void	take_fork(int	fork_to_take, t_philo *philo)
+void	*ft_sleep(t_philo *philo)
+{
+	float	time_past;
+
+	usleep(philo->time_to_sleep*1e3);
+	gettimeofday(&philo->time_end, NULL);
+	time_past = time_diff(&philo->time_begin, &philo->time_end);
+	print_thread(&philo->fork->mutex, "\033[0;32msleep", philo, time_past);
+	return (NULL);
+}
+
+void	*ft_think(t_philo *philo)
 {
 	float	time_past;
 	
-	pthread_mutex_lock(&philo->fork->tab_fork[fork_to_take]);
-	pthread_mutex_lock(&philo->fork->tab_fork[fork_to_take + 1]);
-	usleep(philo->time_for_eat);
 	gettimeofday(&philo->time_end, NULL);
 	time_past = time_diff(&philo->time_begin, &philo->time_end);
-	pthread_mutex_lock(&philo->fork->mutex);
+	print_thread(&philo->fork->mutex, "\033[0;37mthink", philo, time_past);
+	return (NULL);
+}
+
+
+void	take_fork(int	fork_to_take, t_philo *philo)
+{
+	float	time_past;
+	int		fork;
+
+	if (philo->id == philo->last_philo)
+		fork = 0;
+	else
+		fork = fork_to_take + 1;
+	pthread_mutex_lock(&philo->fork->tab_fork[fork_to_take]);
+	pthread_mutex_lock(&philo->fork->tab_fork[fork]);
+	usleep((philo->time_for_eat) * 1e3);
+	gettimeofday(&philo->time_end, NULL);
+	time_past = time_diff(&philo->time_begin, &philo->time_end);
 	if (time_past < philo->time_bf_eat*1e-3)
 	{
-		printf("\033[1;33mphilo|%zu|time used|%f|\n", philo->id, philo->time_bf_eat*1e-3);
+		print_thread(&philo->fork->mutex, "\033[1;33meat", philo, time_past);
 		philo->nbr_time_eat -= 1;
 	}
 	else
 	{
-		printf("\033[0;31mphilo|%zu|is dead|%f|\n", philo->id, time_past);
+		print_thread(&philo->fork->mutex, "\033[0;31mis dead", philo, time_past);
 		philo->sig->sig_dead = 0;
 	}
-	pthread_mutex_unlock(&philo->fork->mutex);
-	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take + 1]);
+	pthread_mutex_unlock(&philo->fork->tab_fork[fork]);
 	pthread_mutex_unlock(&philo->fork->tab_fork[fork_to_take]);
 }
 
+
 void	*eat(t_philo *philo)
 {
-	if (philo->nbr_time_eat == 0)
-		return (NULL);
+	static	int i = 0;
+
+	if ((philo->id % 2) == i)
+	{
+		usleep(philo->time_for_eat * 1e1);
+		if (i == 0)
+			i = 1;
+		else
+			i = 0;
+	}
 	take_fork(philo->id - 1, philo);
 	return(NULL);
 }
-
-// int	condition(t_philo *philo, void*f(t_philo *philo))
-// {
-// 	if (philo->sig->sig_dead == 0)
-// 		exit(2);	
-// 	f(philo);
-// 	return (0);
-// }
 
 void	*event_loop(void *p)
 {
@@ -96,8 +104,14 @@ void	*event_loop(void *p)
 	while (1)
 	{
 		eat(philo);
+		if (philo->nbr_time_eat == 0)
+		{
+			pthread_join(philo->thread, NULL);
+			break ;
+		}
 		if (philo->sig->sig_dead == 0)
 			return (NULL);
+		gettimeofday(&philo->time_begin, NULL);
 		ft_sleep(philo);
 		if (philo->sig->sig_dead == 0)
 			return (NULL);
@@ -106,20 +120,4 @@ void	*event_loop(void *p)
 			return (NULL);
 	}
 	return (NULL);
-}
-
-void	*to_do(t_lst_philo *lst_philo)
-{
-	t_philo		*philo;
-	int			i = 0;
-
-	philo = lst_philo->begin;
-	while (i < lst_philo->nbr_philo)
-	{
-		pthread_create(&philo->thread, NULL, event_loop, (void*)(philo));
-		++i;
-		philo = philo->next;
-	}
-	end_pthread(lst_philo);
-	return (0);
 }

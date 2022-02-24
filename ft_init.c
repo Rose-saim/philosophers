@@ -40,7 +40,7 @@ t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 
 	i = 0;
 	head = lst_philo->begin;
-	fork->tab_fork = malloc(sizeof(pthread_mutex_t) * (nbr_philo + 1));
+	fork->tab_fork = malloc(sizeof(pthread_mutex_t) * (nbr_philo));
 	if (!fork->tab_fork)
 		return (NULL);
 	pthread_mutex_init(&(fork->mutex), NULL);

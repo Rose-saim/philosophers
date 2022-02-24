@@ -8,6 +8,8 @@ void	initilisation(int ac, char **av, t_lst_philo *lst_philo)
 
 	philo = NULL;
 	lst_philo->nbr_philo = ft_atoi(av[1]);
+	if (lst_philo->nbr_philo == 1)
+		write_error("Philo is dead");
 	info[0] = ft_atoi(av[2]);
 	info[1] = ft_atoi(av[3]);
 	info[2] = ft_atoi(av[4]);
@@ -37,6 +39,22 @@ void	init_sig(t_lst_philo *lst_philo)
 		philo = philo->next;
 		++i;
 	}
+}
+
+void	*to_do(t_lst_philo *lst_philo)
+{
+	t_philo		*philo;
+	int			i = 0;
+
+	philo = lst_philo->begin;
+	while (i < lst_philo->nbr_philo)
+	{
+		pthread_create(&philo->thread, NULL, event_loop, (void*)(philo));
+		++i;
+		philo = philo->next;
+	}
+	end_pthread(lst_philo);
+	return (0);
 }
 
 int	main(int ac, char **av)
