@@ -2,6 +2,8 @@
 
 void	print_thread(pthread_mutex_t *lock, char *str, t_philo *philo, float time)
 {
+	if (philo->sig->sig_dead == 0)
+		return ;
 	pthread_mutex_lock(lock);
 	printf("%s%f %zu", philo->color, time, philo->id);
 	printf(" %s\n", str);
