@@ -1,5 +1,6 @@
-MANDA_NAMES	= philosophers.c ft_init.c error.c events.c \
-			  ft_lst.c utils.c status.c
+MANDA_NAMES	= conditions.c error.c ft_free.c ft_init.c ft_lst.c \
+			  main_actions.c philosophers.c  secondary_actions.c\
+			  status.c utils.c
 
 MANDA_OBJS	= $(MANDA_NAMES:.c=.o)
 
@@ -7,13 +8,12 @@ NAME		= philosophers
 
 CC			= clang
 CFLAGS		= -Wall -Wextra -Werror
-
 RM = rm -f
 
 all:		$(NAME)
 
 $(NAME):	$(MANDA_OBJS)
-				$(CC) -pthread $(CFLAGS) $(MANDA_OBJS) -pthread -o $(NAME)
+				$(CC) $(CFLAGS) $(MANDA_OBJS) -pthread -o $(NAME)
 
 clean:
 			$(RM) $(MANDA_OBJS)

@@ -1,49 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   status.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/27 16:58:38 by myrmarti          #+#    #+#             */
+/*   Updated: 2022/03/03 13:05:57 by myrmarti         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
-void	condition(t_philo *philo, int info, void *f(t_philo *philo, int info))
+void	lock(t_philo *philo)
 {
-	if (philo->sig->sig_dead == 0)
-		return ;
-	f(philo, info);
-}
-
-void	*lock_fork(t_philo *philo)
-{
-	float	time_past;
-
 	sem_wait(&philo->fork->tab_fork);
 	sem_wait(&philo->fork->tab_fork);
-	time_past = time_diff(philo, &philo->time_begin, &philo->time_end);
-	philo->color = "\033[0;36m";
-	print_thread(&philo->fork->mutex, "has taken forks", philo, time_past);
-	return (NULL);
 }
 
-void	philo_is_eating(t_philo *philo, int time_past)
+void	unlock(t_philo *philo)
 {
-		philo->color = "\033[1;33m";
-		print_thread(&philo->fork->mutex, "is eating", philo, time_past);
-		philo->nbr_time_eat -= 1;
-}
-
-void	philo_is_dead(t_philo *philo, int time_past)
-{
-		philo->color = "\033[0;31m";
-		print_thread(&philo->fork->mutex, "died", philo, time_past);
-		philo->sig->sig_dead = 0;
-}
-
-void	take_fork(t_philo *philo)
-{
-	float	time_past;
-
-	lock_fork(philo);
-	usleep((philo->time_for_eat) * 1e3);
-	time_past = time_diff(philo, &philo->time_begin, &philo->time_end);
-	if (time_past < (philo->time_bf_eat*1e-3))
-		philo_is_eating(philo, time_past);
-	else
-		philo_is_dead(philo, time_past);
 	sem_post(&philo->fork->tab_fork);
 	sem_post(&philo->fork->tab_fork);
+}
+
+void	print_thread(sem_t *l, char *s, t_philo *ph)
+{
+	long	time_past;
+
+	time_past = ft_time() - ph->time_begin;
+	sem_wait(&ph->sig->is_dead);
+	sem_wait(l);
+	if (ph->sig->sig_dead == 1)
+	{
+		printf("%s%ld %zu", ph->color, time_past, ph->id);
+		printf(" %s\n", s);
+	}
+	sem_post(l);
+	sem_post(&ph->sig->is_dead);
+	return ;
 }

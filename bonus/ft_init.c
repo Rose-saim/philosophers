@@ -1,14 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_init.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/27 16:44:15 by myrmarti          #+#    #+#             */
+/*   Updated: 2022/03/03 12:50:02 by myrmarti         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
-void	init_info(int ac, char **av, t_lst_philo *lst_philo)
+void	init_info_lst(int ac, char **av, t_lst_philo *lst_philo)
 {
-	t_philo	*philo;
 	int		info[4];
 
-	philo = NULL;
 	lst_philo->nbr_philo = ft_atoi(av[1]);
 	if (lst_philo->nbr_philo == 1)
-		write_error("Philo is dead");
+	{
+		printf("%ld 1 is dead\n", ft_time() - ft_time());
+		exit (1);
+	}
 	info[0] = ft_atoi(av[2]);
 	info[1] = ft_atoi(av[3]);
 	info[2] = ft_atoi(av[4]);
@@ -18,44 +31,42 @@ void	init_info(int ac, char **av, t_lst_philo *lst_philo)
 		info[3] = -1;
 	creat_lst(lst_philo, lst_philo->nbr_philo);
 	add_info_lst(lst_philo, info);
-	philo = lst_philo->begin;
 }
 
-void	init_sig(t_lst_philo *lst_philo)
+void	init_sig(t_lst_philo *lst_philo, t_sig *sig)
 {
-	int	nbr_philo;
-	int	i;
+	int		nbr_philo;
+	int		i;
 	t_philo	*philo;
-	t_sig	sig;
 
 	i = 0;
-	sig.sig_dead = 1;
 	philo = lst_philo->begin;
 	nbr_philo = lst_philo->nbr_philo;
 	while (i < nbr_philo)
 	{
-		philo->sig = &sig;
-		philo = philo->next;
 		++i;
+		(philo->sig) = sig;
+		philo = philo->next;
 	}
+	sem_init(&(sig->is_dead), 0, 1);
+	(sig->sig_dead) = 1;
 }
 
-t_lst_philo	*init_mutex(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
+t_lst_philo	*init_fork(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)
 {
-	int	i;
+	int		i;
 	t_philo	*head;
 
+	sem_init(&(fork->tab_fork), 0, nbr_philo);
+	sem_init(&(fork->mutex), 0, 1);
 	i = 0;
 	head = lst_philo->begin;
-	sem_init(&(fork->mutex), 0, 1);
-	sem_init(&(fork->tab_fork), 0, nbr_philo);
-	(lst_philo->fork) = fork;
-	i = 0;
 	while (i < lst_philo->nbr_philo)
 	{
-		head->fork = fork;
-		head = head->next;
 		++i;
+		(head->fork) = fork;
+		head = head->next;
 	}
+	(lst_philo->fork) = fork;
 	return (lst_philo);
 }
