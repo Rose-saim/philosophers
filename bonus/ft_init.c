@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:44:15 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/04 19:53:23 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/05 21:15:14 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	init_sig(t_lst_philo *lst_philo, t_sig *sig)
 	sem_init(&(sig->is_dead), 0, 1);
 	sem_init(&(sig->change_sig), 0, 1);
 	(sig->sig_dead) = 1;
+	(sig->sig_dead2) = 0;
 }
 
 t_lst_philo	*init_fork(t_fork *fork, t_lst_philo *lst_philo, int nbr_philo)

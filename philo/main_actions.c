@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:57:33 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/05 16:45:51 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/05 21:02:11 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	ft_sleep(t_philo *philo)
 {
+	if (if_dead(philo) == 1)
+		return ;
 	philo->color = "\033[0;32m";
 	print_thread(&philo->fork->mutex, "is sleeping", philo);
 	slp(philo->time_to_sleep, philo);
@@ -21,6 +23,8 @@ void	ft_sleep(t_philo *philo)
 
 void	ft_think(t_philo *philo)
 {
+	if (if_dead(philo) == 1)
+		return ;
 	philo->color = "\033[0;37m";
 	print_thread(&philo->fork->mutex, "is thinking", philo);
 }

@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:48:49 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/04 19:50:30 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/05 21:16:52 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,14 @@
 typedef struct s_fork
 {
 	void			*philo;
-	sem_t	tab_fork;
-	sem_t	mutex;
+	sem_t		tab_fork;
+	sem_t		mutex;
 }t_fork;
 
 typedef struct s_sig
 {
 	int				sig_dead;
+	int				sig_dead2;
 	int				sig_eat;
 	int				even_max_eat[2];
 	int				odd_max_eat[2];
@@ -90,18 +91,19 @@ void		free_lst_philo(t_lst_philo *lst_philo);
 void		init_info_lst(int ac, char **av, t_lst_philo *lst_philo);
 void		init_sig(t_lst_philo *lst_philo, t_sig *sig);
 
-void		eat(t_philo *philo);
+void		__eat(t_philo *philo);
 void		ft_think(t_philo *philo);
 void		ft_sleep(t_philo *philo);
-void		slp(long nbr);
+void		slp(long nbr, t_philo *philo);
 
 void		take_fork(t_philo *philo);
 void		philo_is_eating(t_philo *philo);
 void		philo_is_dead(t_philo *philo, long time_past);
+int			update_signal(t_philo *philo);
 
 void		*event_loop(void *p);
 void		*to_do(t_lst_philo *lst_philo);
-void		will_eat(t_philo *philo, int fork_first, int fork_second);
+void		will_eat(t_philo *philo);
 
 void		free_destroy(t_lst_philo *lst_philo);
 void		end_pthread(t_lst_philo *lst_philo);

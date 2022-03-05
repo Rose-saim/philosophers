@@ -6,12 +6,19 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:58:38 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 14:39:45 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/05 21:06:55 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 #include <stdio.h>
+
+void	take_fork(t_philo *philo)
+{
+	philo->color = "\033[0;36m";
+	print_thread(&philo->fork->mutex, "has taken a fork", philo);
+	print_thread(&philo->fork->mutex, "has taken a fork", philo);
+}
 
 void	lock(t_philo *philo, int fork_first, int fork_second)
 {
