@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:48:49 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 12:37:35 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/04 19:50:30 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,11 @@ typedef struct s_fork
 typedef struct s_sig
 {
 	int				sig_dead;
+	int				sig_eat;
+	int				even_max_eat[2];
+	int				odd_max_eat[2];
 	pthread_mutex_t	is_dead;
+	pthread_mutex_t	change_sig;
 }t_sig;
 
 typedef struct s_philo

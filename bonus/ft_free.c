@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:41:42 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 12:48:19 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/04 19:51:17 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 
 void	destroy_mutex(t_lst_philo *lst_philo)
 {
-	int	i;
-
-	i = 0;
 	sem_destroy(&(lst_philo->fork->mutex));
 	sem_destroy(&(lst_philo->begin->sig->is_dead));
+	sem_destroy(&(lst_philo->begin->sig->change_sig));
 	sem_destroy(&(lst_philo->fork->tab_fork));
 }
 

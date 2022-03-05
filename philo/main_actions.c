@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:57:33 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 14:42:07 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:53:13 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_sleep(t_philo *philo)
 {
 	philo->color = "\033[0;32m";
 	print_thread(&philo->fork->mutex, "is sleeping", philo);
-	slp(philo->time_to_sleep * 1e3);
+	slp(philo->time_to_sleep);
 }
 
 void	ft_think(t_philo *philo)
@@ -25,17 +25,59 @@ void	ft_think(t_philo *philo)
 	print_thread(&philo->fork->mutex, "is thinking", philo);
 }
 
-void	eat(t_philo *philo)
+int	update_signal(t_philo *philo)
 {
-	int		fork_right;
-
-	fork_right = order_fork(philo);
+	pthread_mutex_lock(&philo->sig->change_sig);
 	if (philo->id % 2 == 0)
-		will_eat(philo, philo->id - 1, fork_right);
+	{
+		if (philo->sig->even_max_eat[0] > 0)
+			philo->sig->even_max_eat[0] -= 1;
+		if (philo->sig->even_max_eat[0] == 0)
+		{
+
+			philo->sig->even_max_eat[0] = philo->sig->even_max_eat[1];
+		 	philo->sig->sig_eat = 0;
+		}
+	}
 	else
-		will_eat(philo, fork_right, philo->id -1);
+	{
+		if (philo->sig->odd_max_eat[0] > 0)
+			philo->sig->odd_max_eat[0] -= 1;
+		if (philo->sig->odd_max_eat[0] == 0)
+		{
+			philo->sig->odd_max_eat[0] = philo->sig->odd_max_eat[1];
+		 	philo->sig->sig_eat = 2;
+		}
+	}
+	pthread_mutex_unlock(&philo->sig->change_sig);
+	return (1);
 }
 
+
+void __eat(t_philo *philo)
+{
+	int	fork_right;
+	
+	fork_right = order_fork(philo);
+	lock(philo, fork_right,  philo->id - 1);
+	take_fork(philo);
+	if (update_signal(philo) == 1)
+	{
+		long	past_time;
+		
+		past_time = ft_time() - philo->t_beg_lp;
+		if (past_time <= philo->time_bf_eat)
+			philo_is_eating(philo);
+		else
+			philo_is_dead(philo, past_time);
+	}
+	unlock(philo, fork_right, philo->id - 1);
+	if (if_dead(philo) == 1)
+		return ;
+	ft_sleep(philo);
+	ft_think(philo);
+	return ;
+}
 void	*event_loop(void *p)
 {
 	t_philo	*philo;
@@ -43,13 +85,19 @@ void	*event_loop(void *p)
 	philo = (t_philo *)p;
 	while (1)
 	{
-		if ((condition_event(eat, philo)) == 0
-			|| philo->nbr_time_eat == 0)
-			break ;
-		if (condition_event(ft_sleep, philo) == 0)
-			break ;
-		if (condition_event(ft_think, philo) == 0)
-			break ;
+		if (if_dead(philo) == 1 || philo->nbr_time_eat == 0)
+			break ;	
+		pthread_mutex_lock(&philo->sig->change_sig);
+		if (
+			(philo->id % 2 == 0 && philo->sig->sig_eat == 2)
+			||(philo->id % 2 != 0 && philo->sig->sig_eat != 2)
+			)
+		{
+			pthread_mutex_unlock(&philo->sig->change_sig);
+			__eat(philo);
+		}
+		else
+			pthread_mutex_unlock(&philo->sig->change_sig);
 	}
 	return (NULL);
 }

@@ -6,11 +6,12 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:44:15 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 12:21:17 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/04 19:53:23 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#define RESERVE 1
 
 void	init_info_lst(int ac, char **av, t_lst_philo *lst_philo)
 {
@@ -42,6 +43,14 @@ void	init_sig(t_lst_philo *lst_philo, t_sig *sig)
 	i = 0;
 	philo = lst_philo->begin;
 	nbr_philo = lst_philo->nbr_philo;
+	sig->even_max_eat[RESERVE] = nbr_philo / 2;
+	sig->even_max_eat[0] = sig->even_max_eat[RESERVE];
+	if (nbr_philo % 2 == 0)
+		sig->odd_max_eat[RESERVE] = sig->even_max_eat[RESERVE];
+	else
+		sig->odd_max_eat[RESERVE] = sig->even_max_eat[RESERVE] + 1;
+	sig->odd_max_eat[0] = sig->odd_max_eat[RESERVE];
+	sig->sig_eat = 2;
 	while (i < nbr_philo)
 	{
 		++i;
@@ -49,6 +58,7 @@ void	init_sig(t_lst_philo *lst_philo, t_sig *sig)
 		philo = philo->next;
 	}
 	pthread_mutex_init(&(sig->is_dead), NULL);
+	pthread_mutex_init(&(sig->change_sig), NULL);
 	(sig->sig_dead) = 1;
 }
 

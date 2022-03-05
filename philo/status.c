@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#include <stdio.h>
 
 void	lock(t_philo *philo, int fork_first, int fork_second)
 {

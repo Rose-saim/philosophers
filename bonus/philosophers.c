@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#define ERROR "Number of arguments is wrong"
 
 void	*to_do(t_lst_philo *lst_philo)
 {
@@ -35,7 +36,10 @@ int	main(int ac, char **av)
 	t_sig		sig;
 
 	if (ac != 5 && ac != 6)
-		write_error("Number of arguments is wrong");
+	{
+		write(2, ERROR, ft_strlen(ERROR));
+		return (0);
+	}
 	parsing_argument(av);
 	init_info_lst(ac, av, &lst_philo);
 	init_fork(&fork, &lst_philo, lst_philo.nbr_philo);

@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:54:16 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 14:20:49 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/03 14:39:09 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,10 @@ void	take_fork(t_philo *philo)
 
 void	slp(long nbr)
 {
-	long	div;
-
-	div = nbr;
 	while (nbr > 0)
 	{
-		usleep(10);
-		nbr -= 10;
+		usleep(100*1e3);
+		nbr -= 100;
 	}
 }
 
@@ -45,7 +42,7 @@ void	philo_is_dead(t_philo *philo, long time_past)
 	sem_wait(&philo->sig->is_dead);
 	if (philo->sig->sig_dead == 1)
 	{
-		time_past = time_diff(philo);
+		time_past = time_diff(philo) * 1e2;
 		sem_wait(&philo->fork->mutex);
 		printf("\033[0;31m%ld %zu died", time_past, philo->id);
 		sem_post(&philo->fork->mutex);
@@ -54,16 +51,16 @@ void	philo_is_dead(t_philo *philo, long time_past)
 	sem_post(&philo->sig->is_dead);
 }
 
-void	will_eat(t_philo *philo)
+void	will_eat(t_philo *philo, int fork_first, int fork_second)
 {
 	long	time_past;
 
-	lock(philo);
+	lock(philo, fork_first, fork_second);
 	take_fork(philo);
 	time_past = ft_time() - philo->t_beg_lp;
 	if (time_past < philo->time_bf_eat)
 		philo_is_eating(philo);
 	else
 		philo_is_dead(philo, time_past);
-	unlock(philo);
+	unlock(philo, fork_first, fork_second);
 }

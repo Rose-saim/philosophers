@@ -7,7 +7,7 @@ MANDA_OBJS	= $(MANDA_NAMES:.c=.o)
 NAME		= philosophers
 
 CC			= clang
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -fsanitize=thread
 RM = rm -f
 
 all:		$(NAME)
