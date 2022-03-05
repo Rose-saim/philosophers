@@ -6,7 +6,7 @@
 /*   By: myrmarti <myrmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 16:42:46 by myrmarti          #+#    #+#             */
-/*   Updated: 2022/03/03 11:46:43 by myrmarti         ###   ########.fr       */
+/*   Updated: 2022/03/05 14:44:27 by myrmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	if_dead(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->sig->is_dead);
-	if (philo->sig->sig_dead == 0)
+	if (philo->sig->sig_dead == 3)
 	{
 		pthread_mutex_unlock(&philo->sig->is_dead);
 		return (1);
