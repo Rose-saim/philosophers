@@ -23,8 +23,8 @@ void	slp(long nbr)
 {
 	while (nbr > 0)
 	{
-		usleep(10*1e3);
-		nbr -= 10;
+		usleep(100*1e3);
+		nbr -= 100;
 	}
 }
 

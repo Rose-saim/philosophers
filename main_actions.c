@@ -25,41 +25,28 @@ void	ft_think(t_philo *philo)
 	print_thread(&philo->fork->mutex, "is thinking", philo);
 }
 
-void	eat(t_philo *philo)
-{
-	int		fork_right;
-
-	fork_right = order_fork(philo);
-	/* if (philo->id % 2 == 0) */
-	/* 	will_eat(philo, philo->id - 1, fork_right); */
-	/* else */
-	/* 	will_eat(philo, fork_right, philo->id -1); */
-}
-
 int	update_signal(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->sig->change_sig);
-	pritf("%d\n", philo->sig->change_sig);	
 	if (philo->id % 2 == 0)
 	{
-		philo->sig->even_max_eat[0] -= 1;
-		if (0 >= philo->sig->even_max_eat[0])
+		if (philo->sig->even_max_eat[0] > 0)
+			philo->sig->even_max_eat[0] -= 1;
+		if (philo->sig->even_max_eat[0] == 0)
 		{
-			philo->sig->sig_eat = 0;
+
 			philo->sig->even_max_eat[0] = philo->sig->even_max_eat[1];
-			pthread_mutex_unlock(&philo->sig->change_sig);
-			return (0);
+		 	philo->sig->sig_eat = 0;
 		}
 	}
 	else
 	{
-		philo->sig->odd_max_eat[0] -= 1;
-		if (0 >= philo->sig->odd_max_eat[0])
+		if (philo->sig->odd_max_eat[0] > 0)
+			philo->sig->odd_max_eat[0] -= 1;
+		if (philo->sig->odd_max_eat[0] == 0)
 		{
-			philo->sig->sig_eat = 2;
 			philo->sig->odd_max_eat[0] = philo->sig->odd_max_eat[1];
-			pthread_mutex_unlock(&philo->sig->change_sig);
-			return (0);
+		 	philo->sig->sig_eat = 2;
 		}
 	}
 	pthread_mutex_unlock(&philo->sig->change_sig);
@@ -70,18 +57,28 @@ int	update_signal(t_philo *philo)
 void __eat(t_philo *philo)
 {
 	int	fork_right;
-
+	
 	fork_right = order_fork(philo);
 	lock(philo, fork_right,  philo->id - 1);
 	take_fork(philo);
-	slp(philo->time_for_eat);
-	unlock(philo, fork_right, philo->id - 1);
 	if (update_signal(philo) == 0)
 		return ;
-	puts("END");
-	// //sleep
-	// print_thread(&philo->fork->mutex, "is sleeping", philo);
-	// slp(philo->time_to_sleep);
+	long	past_time;
+	
+	past_time = ft_time() - philo->t_beg_lp;
+	printf("%ld\n", past_time);
+	if (past_time <= philo->time_bf_eat)
+	{
+		print_thread(&philo->fork->mutex, "is eating", philo);
+		philo->t_beg_lp = ft_time(); 
+		slp(philo->time_for_eat);
+	}
+	else
+		exit(0);
+	unlock(philo, fork_right, philo->id - 1);
+	//sleep
+	print_thread(&philo->fork->mutex, "is sleeping", philo);
+	slp(philo->time_to_sleep);
 	//think
 	/*print_thread(&philo->fork->mutex, "is thinking", philo);*/
 	return ;
@@ -94,7 +91,10 @@ void	*event_loop(void *p)
 	while (1)
 	{
 		pthread_mutex_lock(&philo->sig->change_sig);
-		if ((philo->id % 2 == 0 && philo->sig->sig_eat == 2))
+		if (
+			(philo->id % 2 == 0 && philo->sig->sig_eat == 2)
+			||(philo->id % 2 != 0 && philo->sig->sig_eat != 2)
+			)
 		{
 			pthread_mutex_unlock(&philo->sig->change_sig);
 			__eat(philo);	
